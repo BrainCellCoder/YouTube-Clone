@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const userRoutes = require("./routes/usersRoutes");
 const commentRoutes = require("./routes/commentsRoutes");
 const videoRoutes = require("./routes/videosRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 dotenv.config();
@@ -20,6 +21,7 @@ mongoose
     console.log(e);
   });
 
+app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/videos", videoRoutes);
