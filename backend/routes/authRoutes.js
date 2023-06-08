@@ -3,6 +3,13 @@ const authController = require("../controllers/authController");
 const express = require("express");
 const router = express.Router();
 
-router.route("/test").get(authController.test);
+// CREATE ACC
+router.route("/signup").post(authController.signup);
+
+// LOGIN
+// router.route("/signin").post(authController.test);
+
+// GOOGLE
+// router.route("/google").post(authController.test);
 
 module.exports = router;
