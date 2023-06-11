@@ -5,6 +5,7 @@ const userRoutes = require("./routes/usersRoutes");
 const commentRoutes = require("./routes/commentsRoutes");
 const videoRoutes = require("./routes/videosRoutes");
 const authRoutes = require("./routes/authRoutes");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 dotenv.config();
@@ -22,6 +23,7 @@ mongoose
   });
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);

@@ -7,7 +7,7 @@ const router = express.Router();
 router.route("/signup").post(authController.signup);
 
 // LOGIN
-// router.route("/signin").post(authController.test);
+router.route("/signin").post(authController.signin);
 
 // GOOGLE
 // router.route("/google").post(authController.test);
