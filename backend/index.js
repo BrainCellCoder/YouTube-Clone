@@ -28,6 +28,16 @@ app.use("/api/users", userRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/videos", videoRoutes);
 
+app.use((err, req, res, next) => {
+  const status = err.status || 500;
+  const message = err.message || "Something went worng";
+  return res.status(status).json({
+    success: false,
+    status,
+    message,
+  });
+});
+
 app.listen(8000, () => {
   console.log("Listening on PORT: 8000");
 });
