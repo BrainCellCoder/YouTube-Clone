@@ -52,12 +52,31 @@ exports.getUser = async (req, res, next) => {
     next(err);
   }
 };
-exports.subscribe = (req, res, next) => {
-  res.send("USer ROute");
+exports.subscribe = async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  user.subscribedUsers.push(req.params.id);
+  await user.save();
+  const otherUser = await User.findById(req.params.id);
+  otherUser.subscribers++;
+  await otherUser.save();
+  console.log(user, otherUser);
+  res.status(200).json({
+    success: true,
+    message: "Subscription successful!",
+  });
 };
 
-exports.unsubscribe = (req, res, next) => {
-  res.send("USer ROute");
+exports.unsubscribe = async (req, res, next) => {
+  await User.findById(req.user.id, {
+    $pull: { subscribedUsers: req.params.id },
+  });
+  await User.findById(req.params.id, {
+    $inc: { subscribers: -1 },
+  });
+  res.status(200).json({
+    success: true,
+    message: "Unsubscription successful!",
+  });
 };
 exports.like = (req, res, next) => {
   res.send("USer ROute");

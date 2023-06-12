@@ -23,9 +23,14 @@ const UserSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    subscribedUsers: {
-      type: [String],
-    },
+    // subscribedUsers: {
+    //   type: [String],
+    // },
+    subscribedUsers: [
+      {
+        type: String,
+      },
+    ],
   },
   { timestamps: true }
 );
