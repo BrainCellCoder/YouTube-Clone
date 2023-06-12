@@ -11,6 +11,6 @@ router.route("/find/:id").get(videoController.getVideo);
 router.route("/view/:id").get(videoController.addView);
 router.route("/trend").get(videoController.trend);
 router.route("/random").get(videoController.random);
-router.route("/sub").get(videoController.sub);
+router.route("/sub").get(verifyToken, videoController.sub);
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const { createError } = require("../error");
 const Video = require("../models/videoModel");
+const User = require("../models/userModel");
 
 exports.addVideo = async (req, res, next) => {
   try {
@@ -117,10 +118,16 @@ exports.trend = async (req, res, next) => {
 
 exports.sub = async (req, res, next) => {
   try {
-    const video = await Video.findById(req.params.id);
+    const user = await User.findById(req.user.id);
+    const subscribedChannels = user.subscribedUsers;
+    const list = Promise.all(
+      subscribedChannels.map((channelId) => {
+        return Video.find({ userId: channelId });
+      })
+    );
     res.status(200).json({
       success: true,
-      video,
+      list,
     });
   } catch (err) {
     next(err);
