@@ -134,3 +134,31 @@ exports.sub = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getByTag = async (req, res, next) => {
+  try {
+    const tags = req.query.tags.split(",");
+    const videos = await Video.find({ tags: { $in: tags } }).limit(20);
+    res.status(200).json({
+      success: true,
+      videos,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.search = async (req, res, next) => {
+  try {
+    const query = req.query.q;
+    const videos = await Video.find({
+      title: { $regex: query, $options: "i" },
+    });
+    res.status(200).json({
+      success: true,
+      videos,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
