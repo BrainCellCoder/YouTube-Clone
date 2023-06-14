@@ -1,5 +1,6 @@
 const { createError } = require("../error");
 const User = require("../models/userModel");
+const Video = require("../models/videoModel");
 
 exports.updateUser = async (req, res, next) => {
   if (req.params.id === req.user.id) {
@@ -77,9 +78,39 @@ exports.unsubscribe = async (req, res, next) => {
     message: "Unsubscription successful!",
   });
 };
-exports.like = (req, res, next) => {
-  res.send("USer ROute");
+
+exports.like = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const videoId = req.params.videoId;
+
+    await Video.findByIdAndUpdate(videoId, {
+      $addToSet: { likes: userId }, //$addToSet confirms that the userId is pushed only once in the likes array.(Avoid duplication)
+      $pull: { dislikes: userId },
+    });
+    res.status(200).json({
+      succes: true,
+      message: "Video liked!",
+    });
+  } catch (err) {
+    next(err);
+  }
 };
-exports.dislike = (req, res, next) => {
-  res.send("USer ROute");
+
+exports.dislike = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const videoId = req.params.videoId;
+
+    await Video.findByIdAndUpdate(videoId, {
+      $addToSet: { dislikes: userId },
+      $pull: { likes: userId },
+    });
+    res.status(200).json({
+      succes: true,
+      message: "Video disliked!",
+    });
+  } catch (err) {
+    next(err);
+  }
 };
