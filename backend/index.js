@@ -6,6 +6,7 @@ const commentRoutes = require("./routes/commentsRoutes");
 const videoRoutes = require("./routes/videosRoutes");
 const authRoutes = require("./routes/authRoutes");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
 const app = express();
 dotenv.config();
@@ -22,6 +23,7 @@ mongoose
     console.log(e);
   });
 
+app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
