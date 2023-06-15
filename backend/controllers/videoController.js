@@ -128,7 +128,7 @@ exports.sub = async (req, res, next) => {
     );
     res.status(200).json({
       success: true,
-      list: list.flat().sort((a, b) => b.createdAt - a.createdAt),
+      videos: list.flat().sort((a, b) => b.createdAt - a.createdAt),
     });
   } catch (err) {
     next(err);

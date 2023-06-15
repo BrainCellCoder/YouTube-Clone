@@ -4,6 +4,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { loginFaliure, loginStart, loginSuccess } from "../redux/userSlice";
 // import { loginStart, loginSuccess } from "../redux/userSlice";
+import { useCookies } from "react-cookie";
 
 const Container = styled.div`
   display: flex;
@@ -71,24 +72,42 @@ const SignIn = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [cookies] = useCookies(["access_token"]);
   const dispatch = useDispatch();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     dispatch(loginStart());
     try {
-      const res = await axios.post(
-        "http://localhost:8000/api/auth/signin",
-        {
-          name,
-          password,
+      // const res = await axios.post(
+      //   "http://localhost:8000/api/auth/signin",
+      //   {
+      //     name,
+      //     password,
+      //   },
+      //   {
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //       Authorization: `Bearer ${cookies.access_token}`,
+      //     },
+      //     withCredentials: true, // Include cookies
+      //   }
+      // );
+      console.log(name);
+      const res = await fetch(`http://localhost:8000/api/auth/signin`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json",
         },
-        {
-          withCredentials: true, // Include cookies
-        }
-      );
-      dispatch(loginSuccess(res.data));
-      console.log(res.data);
+        body: JSON.stringify({
+          name: name,
+          password: password,
+        }),
+      });
+      const data = await res.json();
+      dispatch(loginSuccess(data.user));
+      localStorage.setItem("access_token", data.token);
     } catch (err) {
       dispatch(loginFaliure());
     }
