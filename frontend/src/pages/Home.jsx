@@ -20,7 +20,6 @@ const Home = ({ type }) => {
           Authorization: `${localStorage.getItem("access_token")}`,
         },
       });
-      console.log(res.data.videos);
       setVideos(res.data.videos);
     };
     fetchVideos();
