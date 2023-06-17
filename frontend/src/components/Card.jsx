@@ -61,7 +61,6 @@ const Card = ({ type, video }) => {
       const res = await axios.get(
         `http://localhost:8000/api/users/find/${video.userId}`
       );
-      console.log(res);
       setCannel(res.data.user);
     };
     fetchUser();
