@@ -50,3 +50,40 @@ exports.signin = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.googleAuth = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (user) {
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY);
+      const expirationTime = 7 * 24 * 60 * 60 * 1000;
+      res
+        .cookie("access_token", token, {
+          httpOnly: true,
+          maxAge: expirationTime,
+        })
+        .json({
+          user: user._doc,
+          token,
+        });
+    } else {
+      const newUser = await User.create({
+        ...req.body,
+        fromGoogle: true,
+      });
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET_KEY);
+      const expirationTime = 7 * 24 * 60 * 60 * 1000;
+      res
+        .cookie("access_token", token, {
+          httpOnly: true,
+          maxAge: expirationTime,
+        })
+        .json({
+          user: newUser._doc,
+          token,
+        });
+    }
+  } catch (err) {
+    next(err);
+  }
+};

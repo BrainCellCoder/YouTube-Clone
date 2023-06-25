@@ -10,6 +10,6 @@ router.route("/signup").post(authController.signup);
 router.route("/signin").post(authController.signin);
 
 // GOOGLE
-// router.route("/google").post(authController.test);
+router.route("/google").post(authController.googleAuth);
 
 module.exports = router;

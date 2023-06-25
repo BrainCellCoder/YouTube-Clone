@@ -108,6 +108,7 @@ const SignIn = () => {
         }),
       });
       const data = await res.json();
+      console.log(data);
       dispatch(loginSuccess(data.user));
       localStorage.setItem("access_token", data.token);
     } catch (err) {
@@ -115,8 +116,22 @@ const SignIn = () => {
     }
   };
 
-  const signInWithGoogle = () => {
-    signInWithPopup(auth, provider);
+  const signInWithGoogle = async () => {
+    dispatch(loginStart());
+    signInWithPopup(auth, provider).then((result) => {
+      axios
+        .post("http://localhost:8000/api/auth/google", {
+          name: result.user.displayName,
+          email: result.user.email,
+          img: result.user.photoURL,
+        })
+        .then((res) => {
+          dispatch(loginSuccess(res.data));
+        })
+        .catch((error) => {
+          dispatch(loginFaliure());
+        });
+    });
   };
 
   return (

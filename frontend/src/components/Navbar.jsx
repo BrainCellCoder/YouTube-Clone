@@ -73,7 +73,7 @@ const Avatar = styled.img`
 
 const Navbar = () => {
   const currentUser = useSelector((state) => state.user.currentUser);
-
+  console.log(currentUser);
   return (
     <Container>
       <Wrapper>
@@ -99,8 +99,9 @@ const Navbar = () => {
                 borderRadius: "50%",
                 backgroundColor: "#999",
               }}
+              src={currentUser?.user?.img || currentUser.img}
             />
-            {currentUser.name}
+            {currentUser?.user?.name || currentUser.name}
           </div>
         ) : (
           <Link to="signin" style={{ textDecoration: "none" }}>
