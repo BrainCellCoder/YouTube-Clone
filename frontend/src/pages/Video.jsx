@@ -10,7 +10,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { format } from "timeago.js";
-import { fetchSuccess } from "../redux/videoSlice";
+import { dislike, fetchSuccess, like } from "../redux/videoSlice";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import { useCookies } from "react-cookie";
 
 const Container = styled.div`
   display: flex;
@@ -112,29 +115,70 @@ const Subscribe = styled.button`
 const Video = () => {
   const { currentUser } = useSelector((state) => state.user);
   const { currentVideo } = useSelector((state) => state.video);
-  console.log(currentVideo);
   const dispatch = useDispatch();
   const path = useLocation().pathname.split("/")[2];
 
-  const [video, setVideo] = useState({});
   const [channel, setChannel] = useState({});
+  const [cookies] = useCookies(["access_token"]);
 
   useEffect(() => {
     const fetchVideo = async () => {
-      const videoRes = await axios.get(
-        `http://localhost:8000/api/videos/find/${path}`
-      );
-      const channelRes = await axios.get(
-        `http://localhost:8000/api/users/find/${videoRes.data.video.userId}`
-      );
-      // setVideo(videoRes.data.video); instead of using video state, use videoSlice(Redux)
-      setChannel(channelRes.data.user);
-      dispatch(fetchSuccess(videoRes.data.video));
+      try {
+        const videoRes = await fetch(
+          `http://localhost:8000/api/videos/find/${path}`
+        );
+        const videoData = await videoRes.json();
+        const channelRes = await axios.get(
+          `http://localhost:8000/api/users/find/${videoData.video.userId}`
+        );
+        // setVideo(videoData.video); //instead of using video state, use videoSlice(Redux)
+        setChannel(channelRes.data.user);
+        dispatch(fetchSuccess(videoData.video));
+      } catch (err) {
+        console.log(err);
+      }
     };
     fetchVideo();
   }, [path, dispatch]);
-  console.log(currentVideo);
-  console.log(currentUser);
+
+  const handleLike = async () => {
+    try {
+      await fetch(`http://localhost:8000/api/users/like/${currentVideo._id}`, {
+        method: "PUT",
+        headers: {
+          authorization: `${
+            localStorage.getItem("access_token") || cookies.access_token
+          }`,
+        },
+      });
+      dispatch(like(currentUser.user._id));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleDislike = async () => {
+    try {
+      await fetch(
+        `http://localhost:8000/api/users/dislike/${currentVideo._id}`,
+        {
+          method: "PUT",
+          headers: {
+            authorization: `${
+              localStorage.getItem("access_token") || cookies.access_token
+            }`,
+          },
+        }
+      );
+      dispatch(dislike(currentUser.user._id));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleSubscription = async () => {
+    await axios.put(`http://localhost:8000/api/users/sub/${channel._id}`);
+  };
 
   return (
     <Container>
@@ -150,17 +194,27 @@ const Video = () => {
             allowfullscreen
           ></iframe>
         </VideoWrapper>
-        <Title>{currentVideo.title}</Title>
+        <Title>{currentVideo?.title}</Title>
         <Details>
           <Info>
-            {currentVideo.views} views • {format(currentVideo.createdAt)}
+            {currentVideo?.views} views • {format(currentVideo?.createdAt)}
           </Info>
           <Buttons>
-            <Button>
-              <ThumbUpOutlinedIcon /> {currentVideo.likes?.length}
+            <Button onClick={handleLike}>
+              {currentVideo?.likes?.includes(currentUser.user._id) ? (
+                <ThumbUpIcon />
+              ) : (
+                <ThumbUpOutlinedIcon />
+              )}{" "}
+              {currentVideo?.likes?.length}
             </Button>
-            <Button>
-              <ThumbDownOffAltOutlinedIcon /> Dislike
+            <Button onClick={handleDislike}>
+              {currentVideo?.dislikes?.includes(currentUser?.user?._id) ? (
+                <ThumbDownIcon />
+              ) : (
+                <ThumbDownOffAltOutlinedIcon />
+              )}
+              Dislike
             </Button>
             <Button>
               <ReplyOutlinedIcon /> Share
@@ -173,14 +227,20 @@ const Video = () => {
         <Hr />
         <Channel>
           <ChannelInfo>
-            <Image src={channel.img} />
+            <Image src={channel?.img} />
             <ChannelDetail>
-              <ChannelName>{channel.name}</ChannelName>
-              <ChannelCounter>{channel.subscribers} subscribers</ChannelCounter>
-              <Description>{currentVideo.desc}</Description>
+              <ChannelName>{channel?.name}</ChannelName>
+              <ChannelCounter>
+                {channel?.subscribers} subscribers
+              </ChannelCounter>
+              <Description>{currentVideo?.desc}</Description>
             </ChannelDetail>
           </ChannelInfo>
-          <Subscribe>SUBSCRIBE</Subscribe>
+          <Subscribe onClick={handleSubscription}>
+            {currentUser.user?.subscribedUsers.includes(channel?._id)
+              ? "SUBSCRIBED"
+              : "SUBSCRIBE"}
+          </Subscribe>
         </Channel>
         <Hr />
         <Comments />

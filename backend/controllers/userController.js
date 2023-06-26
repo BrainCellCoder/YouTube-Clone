@@ -84,10 +84,16 @@ exports.like = async (req, res, next) => {
     const userId = req.user.id;
     const videoId = req.params.videoId;
 
-    await Video.findByIdAndUpdate(videoId, {
-      $addToSet: { likes: userId }, //$addToSet confirms that the userId is pushed only once in the likes array.(Avoid duplication)
-      $pull: { dislikes: userId },
-    });
+    await Video.findByIdAndUpdate(
+      videoId,
+      {
+        $addToSet: { likes: userId }, //$addToSet confirms that the userId is pushed only once in the likes array.(Avoid duplication)
+        $pull: { dislikes: userId },
+      },
+      {
+        new: true,
+      }
+    );
     res.status(200).json({
       succes: true,
       message: "Video liked!",

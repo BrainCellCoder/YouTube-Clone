@@ -127,6 +127,8 @@ const SignIn = () => {
         })
         .then((res) => {
           dispatch(loginSuccess(res.data));
+          console.log(res);
+          localStorage.setItem("access_token", res.data.token);
         })
         .catch((error) => {
           dispatch(loginFaliure());
