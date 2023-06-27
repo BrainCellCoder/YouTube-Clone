@@ -15,6 +15,7 @@ import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import { useCookies } from "react-cookie";
 import { subscription } from "../redux/userSlice";
+import "./Video.css";
 
 const Container = styled.div`
   display: flex;
@@ -204,15 +205,7 @@ const Video = () => {
     <Container>
       <Content>
         <VideoWrapper>
-          <iframe
-            width="100%"
-            height="720"
-            src="https://www.youtube.com/embed/k3Vfj-e1Ma4"
-            title="YouTube video player"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          ></iframe>
+          <div className="video-frame" src={currentVideo.videoUrl}></div>
         </VideoWrapper>
         <Title>{currentVideo?.title}</Title>
         <Details>
@@ -263,7 +256,7 @@ const Video = () => {
           </Subscribe>
         </Channel>
         <Hr />
-        <Comments />
+        <Comments currentUser={currentUser} videoId={currentVideo._id} />
       </Content>
       {/* <Recommendation>
         <Card type="sm" />
