@@ -25,7 +25,21 @@ const Container = styled.div`
 const Content = styled.div`
   flex: 5;
 `;
-const VideoWrapper = styled.div``;
+const VideoWrapper = styled.div`
+  width: 100%;
+  height: 500px;
+`;
+
+// const VideoFrame = styled.iframe`
+//   width: 100%;
+//   height: 100%;
+//   object-fit: cover;
+//   margin: 0 !important;
+//   width: 100%;
+//   padding: 0;
+//   border: none;
+//   outline: none;
+// `;
 
 const Title = styled.h1`
   font-size: 18px;
@@ -204,10 +218,14 @@ const Video = () => {
   return (
     <Container>
       <Content>
-        <VideoWrapper>
-          <div className="video-frame" src={currentVideo.videoUrl}></div>
-        </VideoWrapper>
+        {/* <VideoWrapper> */}
+        {/* <VideoFrame src={currentVideo.videoUrl} /> */}
+        <video width="100%" height="550px" controls={true} autoPlay={true}>
+          <source src={currentVideo?.videoUrl} type="video/mp4" />
+        </video>
+        {/* </VideoWrapper> */}
         <Title>{currentVideo?.title}</Title>
+
         <Details>
           <Info>
             {currentVideo?.views} views • {format(currentVideo?.createdAt)}
