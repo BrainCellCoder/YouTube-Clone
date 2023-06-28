@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import VideoCallIcon from "@mui/icons-material/VideoCall";
+import { Upload } from "./Upload";
 
 const Container = styled.div`
   position: sticky;
@@ -73,45 +74,50 @@ const Avatar = styled.img`
 
 const Navbar = () => {
   const currentUser = useSelector((state) => state.user.currentUser);
+  const [open, setOpen] = useState(false);
+
   return (
-    <Container>
-      <Wrapper>
-        <Search>
-          <Input placeholder="Search" />
-          <SearchOutlinedIcon />
-        </Search>
-        {currentUser ? (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              color: "#fff",
-              justifyContent: "space-between",
-              width: "110px",
-            }}
-          >
-            <VideoCallIcon />
-            <img
+    <>
+      <Container>
+        <Wrapper>
+          <Search>
+            <Input placeholder="Search" />
+            <SearchOutlinedIcon />
+          </Search>
+          {currentUser ? (
+            <div
               style={{
-                width: "32px",
-                height: "32px",
-                borderRadius: "50%",
-                backgroundColor: "#999",
+                display: "flex",
+                alignItems: "center",
+                color: "#fff",
+                justifyContent: "space-between",
+                width: "110px",
               }}
-              src={currentUser?.user?.img || currentUser.img}
-            />
-            {currentUser?.user?.name || currentUser.name}
-          </div>
-        ) : (
-          <Link to="signin" style={{ textDecoration: "none" }}>
-            <Button>
-              <AccountCircleOutlinedIcon />
-              SIGN IN
-            </Button>
-          </Link>
-        )}
-      </Wrapper>
-    </Container>
+            >
+              <VideoCallIcon onClick={() => setOpen(true)} />
+              <img
+                style={{
+                  width: "32px",
+                  height: "32px",
+                  borderRadius: "50%",
+                  backgroundColor: "#999",
+                }}
+                src={currentUser?.user?.img || currentUser.img}
+              />
+              {currentUser?.user?.name || currentUser.name}
+            </div>
+          ) : (
+            <Link to="signin" style={{ textDecoration: "none" }}>
+              <Button>
+                <AccountCircleOutlinedIcon />
+                SIGN IN
+              </Button>
+            </Link>
+          )}
+        </Wrapper>
+      </Container>
+      {open && <Upload setOpen={setOpen} />}
+    </>
   );
 };
 
